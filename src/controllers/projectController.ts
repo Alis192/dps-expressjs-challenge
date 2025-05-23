@@ -32,3 +32,47 @@ export const createProject = (req: Request, res: Response) => {
 		res.status(500).json({ error: 'Failed to create project' });
 	}
 };
+
+export const updateProject = (req: Request, res: Response) => {
+	const { id } = req.params;
+	const { name, description } = req.body;
+
+	if (!name || !description) {
+		return res
+			.status(400)
+			.json({ error: 'Name and description are required' });
+	}
+
+	try {
+		const result = db.run(
+			'UPDATE projects SET name = @name, description = @description WHERE id = @id',
+			{ id, name, description },
+		);
+
+		if (result.changes === 0) {
+			return res.status(404).json({ error: 'Project not found' });
+		}
+
+		res.status(200).json({ id, name, description });
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: 'Failed to update project' });
+	}
+};
+
+export const deleteProject = (req: Request, res: Response) => {
+	const { id } = req.params;
+
+	try {
+		const result = db.run('DELETE FROM projects WHERE id = @id', { id });
+
+		if (result.changes === 0) {
+			return res.status(404).json({ error: 'Project not found' });
+		}
+
+		res.status(204).send(); // No content
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: 'Failed to delete project' });
+	}
+};
