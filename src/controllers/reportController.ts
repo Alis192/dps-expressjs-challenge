@@ -1,6 +1,13 @@
 import { Request, Response } from 'express';
 import db from '../services/db.service';
 
+// Define Report interface for type safety
+interface Report {
+	id: string;
+	text: string;
+	projectId: string;
+}
+
 export const createReport = (req: Request, res: Response) => {
 	const { projectId } = req.params;
 	const { id, text } = req.body;
@@ -36,9 +43,7 @@ export const getReportsForProject = (req: Request, res: Response) => {
 	try {
 		const reports = db.query(
 			'SELECT * FROM reports WHERE projectId = @projectId',
-			{
-				projectId,
-			},
+			{ projectId },
 		);
 		res.status(200).json(reports);
 	} catch (err) {
@@ -75,7 +80,10 @@ export const updateReport = (req: Request, res: Response) => {
 	try {
 		const result = db.run(
 			'UPDATE reports SET text = @text WHERE id = @id',
-			{ id, text },
+			{
+				id,
+				text,
+			},
 		);
 
 		if (result.changes === 0) {
@@ -103,5 +111,32 @@ export const deleteReport = (req: Request, res: Response) => {
 	} catch (err) {
 		console.error('DB Error:', err);
 		res.status(500).json({ error: 'Failed to delete report' });
+	}
+};
+
+export const getReportsWithRepeatedWords = (req: Request, res: Response) => {
+	try {
+		// Cast the result to Report[] so TypeScript knows its shape
+		const reports = db.query('SELECT * FROM reports') as Report[];
+
+		const filteredReports = reports.filter((report: Report) => {
+			const wordCounts: Record<string, number> = {};
+			const words = report.text
+				.toLowerCase()
+				.replace(/[^\w\s]/g, '') // remove punctuation
+				.split(/\s+/); // split on whitespace
+
+			for (const word of words) {
+				wordCounts[word] = (wordCounts[word] || 0) + 1;
+			}
+
+			// Check if any word appears at least 3 times
+			return Object.values(wordCounts).some((count) => count >= 3);
+		});
+
+		res.status(200).json(filteredReports);
+	} catch (err) {
+		console.error('DB Error:', err);
+		res.status(500).json({ error: 'Failed to analyze reports' });
 	}
 };

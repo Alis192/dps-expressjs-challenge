@@ -5,6 +5,7 @@ import {
 	getReportById,
 	updateReport,
 	deleteReport,
+	getReportsWithRepeatedWords,
 } from '../controllers/reportController';
 
 const router = express.Router({ mergeParams: true });
@@ -12,6 +13,8 @@ const router = express.Router({ mergeParams: true });
 // Nested under /projects/:projectId/
 router.post('/', createReport);
 router.get('/', getReportsForProject);
+
+router.get('/reports/repeated-words', getReportsWithRepeatedWords);
 
 // Global routes
 router.get('/reports/:id', getReportById);
