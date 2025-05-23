@@ -2,8 +2,42 @@
 
 ## Overview
 
-This repository contains a very basic web application based on Typescript and Express.js. Main application file is `index.ts`. Node and npm are required.
+This project is a solution to the [Digital Product School Express.js Challenge](https://github.com/DigitalProductschool/dps-expressjs-challenge).  
+It provides a RESTful API to manage projects and their associated reports using **Express.js** and **SQLite**.
 
+---
+
+## 🚀 Features
+
+### ✅ Project Endpoints
+- `GET /projects` — Retrieve all projects
+- `POST /projects` — Create a new project (`id`, `name`, `description` required)
+- `GET /projects/:id` — Retrieve a single project by ID
+- `PUT /projects/:id` — Update a project’s name and description
+- `DELETE /projects/:id` — Delete a project
+
+### 📄 Report Endpoints
+- `POST /projects/:projectId/reports` — Create a report for a specific project
+- `GET /projects/:projectId/reports` — Retrieve all reports for a specific project
+- `GET /reports/:id` — Retrieve a single report by ID
+- `PUT /reports/:id` — Update report text
+- `DELETE /reports/:id` — Delete a report
+
+### 🌟 Bonus: Repeated Word Analysis
+- `GET /reports/repeated-words`  
+  Returns all reports where **any word appears at least 3 times**.
+
+---
+
+## 🛠 Technologies Used
+- [Node.js](https://nodejs.org/)
+- [Express.js](https://expressjs.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [SQLite](https://www.sqlite.org/)
+- [better-sqlite3](https://github.com/WiseLibs/better-sqlite3)
+- ESLint, Prettier, Husky (pre-commit hooks)
+
+---
 ## Environment Setup
 
 Ensure you have Node.js (v14.x or later) and npm (v6.x or later) installed.  
